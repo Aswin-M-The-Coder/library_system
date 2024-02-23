@@ -79,6 +79,23 @@ app.post("/mark-as-not-read", (req, res) => {
   });
 });
 
+
+app.post("/insertData", (req, res) => {
+  const { name, author, subject, publishedDate } = req.body;
+  const sql = "INSERT INTO library VALUES (?, ?, ?, ?)";
+  const values = [name, author, subject, publishedDate];
+
+  connection.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Error inserting data:", err);
+      res.status(500).send("Error inserting data");
+      return;
+    }
+    console.log("Data inserted successfully");
+    res.send("Data inserted successfully");
+  });
+});
+
 app.get("/books", (req, res) => {
   const query = `SELECT * FROM library`;
   connection.query(query, [], (err, rows) => {

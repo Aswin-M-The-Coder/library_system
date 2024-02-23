@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Input, Table, Pagination, PaginationItem, PaginationLink, Col, Row, Button } from 'reactstrap';
-import './App.css'; // Import CSS file for custom styles
+import { Input, Table, Pagination, PaginationItem, PaginationLink, Col, Row, Button, FormGroup,Form } from 'reactstrap';
+import './App.css'; 
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -59,10 +59,8 @@ const App = () => {
   const handleMarkAsRead = (index) => {
     const bookToMarkAsRead = sortedData[index];
 
-    // Send a POST request to the backend to handle insertion and deletion
     axios.post("https://library-system-1.onrender.com/mark-as-read", bookToMarkAsRead)
       .then((response) => {
-        // If successful, update state accordingly
         const updatedData = sortedData.filter((_, i) => i !== index);
         setData(updatedData);
         setReadBooks([...readBooks, bookToMarkAsRead]);
@@ -73,13 +71,11 @@ const App = () => {
   };
 
   const handleMarkAsNotRead = (index) => {
-    const bookToMarkAsRead = sortedData[index];
+    const bookToMarkAsRead = readBooks[index];
 
-    // Send a POST request to the backend to handle insertion and deletion
     axios.post("https://library-system-1.onrender.com/mark-as-not-read", bookToMarkAsRead)
       .then((response) => {
-        // If successful, update state accordingly
-        const updatedData = sortedData.filter((_, i) => i !== index);
+        const updatedData = readBooks.filter((_, i) => i !== index);
         setReadBooks(updatedData);
         setData([...data, bookToMarkAsRead]);
       })
@@ -149,9 +145,36 @@ const App = () => {
     setCurrentPage(number);
   };
 
+  const insertData = async (bookData) => {
+    try {
+      const response = await axios.post("https://your-backend-url/insertData", bookData);
+      console.log("Data inserted successfully:", response.data);
+    } catch (error) {
+      console.error("Error inserting data:", error);
+    }
+  };
+
+
   return (
     <article className="container">
       <h1 className="title">Library Management System</h1>
+      <Form onSubmit={(event) => {
+  event.preventDefault(); 
+  insertData({ 
+    name: event.target.elements.bookName.value,
+    author: event.target.elements.authorName.value,
+    subject: event.target.elements.subject.value,
+    publishedDate: event.target.elements.publishedDate.value
+  });
+}}>
+  <FormGroup>
+    <Input type="text" name="bookName" placeholder="Book Name" />
+    <Input type="text" name="authorName" placeholder="Author Name" />
+    <Input type="text" name="subject" placeholder="Subject" />
+    <Input type="date" name="publishedDate" placeholder="Published Date" />
+    <Button type="submit">Add Book</Button>
+  </FormGroup>
+</Form>
       <Row>
         <Col>
           <div className="sub-title">Normal Search by</div>
@@ -179,14 +202,13 @@ const App = () => {
           />
           <Button onClick={handleExcludeTerm}>Reset</Button>
         </Col>
-      
-      <Col>
-        <div className="sub-title">Date sort by</div>
-        <Input type="select" value={sortOrder} onChange={handleSortOrderChange} style={{ width: '150px' }}>
-          <option value="asc">Ascending</option>
-          <option value="desc">Descending</option>
-        </Input>
-      </Col>
+        <Col>
+          <div className="sub-title">Date sort by</div>
+          <Input type="select" value={sortOrder} onChange={handleSortOrderChange} style={{ width: '150px' }}>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </Input>
+        </Col>
       </Row>
       <span className="sub-title">Total Books found: {filteredData.length}</span>
       <Table striped bordered hover style={{ marginTop: '10px' }}>
@@ -205,7 +227,7 @@ const App = () => {
               <td>{item.Title}</td>
               <td>{item.Author}</td>
               <td>{item.Subject}</td>
-              <td>{item.Publish_Date.slice(0,10)}</td>
+              <td>{item.Publish_Date.slice(0, 10)}</td>
               <td>
                 <Button onClick={() => handleMarkAsRead(index)}>Mark as Read</Button>
               </td>
@@ -223,7 +245,7 @@ const App = () => {
         ))}
       </Pagination>
       <h1 className="title">Read Books</h1>
-      <Table striped bordered hover style={{ marginTop: '10px', marginBottom: '10px'}}>
+      <Table striped bordered hover style={{ marginTop: '10px', marginBottom: '10px' }}>
         <thead>
           <tr>
             <th>Name</th>
@@ -234,13 +256,12 @@ const App = () => {
           </tr>
         </thead>
         <tbody>
-          
           {readBooks.map((item, index) => (
             <tr key={index}>
               <td>{item.Title}</td>
               <td>{item.Author}</td>
               <td>{item.Subject}</td>
-              <td>{item.Publish_Date.slice(0,10)}</td>
+              <td>{item.Publish_Date.slice(0, 10)}</td>
               <td>
                 <Button onClick={() => handleMarkAsNotRead(index)}>delete</Button>
               </td>
@@ -248,6 +269,8 @@ const App = () => {
           ))}
         </tbody>
       </Table>
+      {/* Form Group to Insert Data into Library */}
+      
     </article>
   );
 };
