@@ -129,8 +129,6 @@ const App = () => {
             style={{ width: '250px', marginRight: '10px' }}
           />
         </Col>
-      </Row>
-      <Row>
         <Col>
           <div className="sub-title">Exclude Search by</div>
           <Input
@@ -142,7 +140,7 @@ const App = () => {
           />
           <Button onClick={handleExcludeTerm}>Exclude</Button>
         </Col>
-      </Row>
+      
       <Col>
         <div className="sub-title">Date sort by</div>
         <Input type="select" value={sortOrder} onChange={handleSortOrderChange} style={{ width: '150px' }}>
@@ -150,6 +148,7 @@ const App = () => {
           <option value="desc">Descending</option>
         </Input>
       </Col>
+      </Row>
       <span className="sub-title">Total Books found: {filteredData.length}</span>
       <Table striped bordered hover style={{ marginTop: '10px' }}>
         <thead>
@@ -167,7 +166,7 @@ const App = () => {
               <td>{item.Title}</td>
               <td>{item.Author}</td>
               <td>{item.Subject}</td>
-              <td>{item.Publish_Date}</td>
+              <td>{item.Publish_Date.slice(0,10)}</td>
               <td>
                 <Button onClick={() => handleMarkAsRead(index)}>Mark as Read</Button>
               </td>
