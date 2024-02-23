@@ -8,6 +8,7 @@ body {
   background-image: url('bg.jpeg');
   background-size: cover;
   background-position: center;
+  margin-bottom: 2vh;
 }
 
 code {

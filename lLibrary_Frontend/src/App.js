@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Input, Table, Pagination, PaginationItem, PaginationLink, Col, Row } from 'reactstrap';
+import { Input, Table, Pagination, PaginationItem, PaginationLink, Col, Row, Button } from 'reactstrap';
 import './App.css'; // Import CSS file for custom styles
 
 const App = () => {
@@ -10,6 +10,7 @@ const App = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const [booksPerPage] = useState(5);
+  const [readBooks, setReadBooks] = useState([]);
 
   useEffect(() => {
     axios.get("https://library-system-1.onrender.com/books")
@@ -32,6 +33,19 @@ const App = () => {
 
   const handleSortOrderChange = (event) => {
     setSortOrder(event.target.value);
+  };
+
+  // const handleMarkAsRead = (index) => {
+  //   const bookToMarkAsRead = sortedData[index];
+  //   setReadBooks([...readBooks, bookToMarkAsRead]);
+  //   const updatedData = data.filter((_, i) => i !== index);
+  //   setData(updatedData);
+  // };
+  const handleMarkAsRead = (index) => {
+    const bookToMarkAsRead = sortedData[index];
+    setReadBooks([...readBooks, bookToMarkAsRead]);
+    const updatedData = sortedData.filter((_, i) => i !== index);
+    setData(updatedData);
   };
 
   const filteredData = data.filter((item) => {
@@ -83,19 +97,19 @@ const App = () => {
       <h1 className="title">Library Management System</h1>
       <Row>
         <Col>
-              <div className="sub-title">Search by</div>
-              <Input type="select" value={searchCategory} onChange={handleSearchCategoryChange} style={{ width: '150px', marginRight: '10px' }}>
-                <option value="name">Name</option>
-                <option value="author">Author</option>
-                <option value="subject">Subject</option>
-              </Input>
-              <Input
-                type="text"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                style={{ width: '250px', marginRight: '10px' }}
-              />
+          <div className="sub-title">Search by</div>
+          <Input type="select" value={searchCategory} onChange={handleSearchCategoryChange} style={{ width: '150px', marginRight: '10px' }}>
+            <option value="name">Name</option>
+            <option value="author">Author</option>
+            <option value="subject">Subject</option>
+          </Input>
+          <Input
+            type="text"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            style={{ width: '250px', marginRight: '10px' }}
+          />
         </Col>
         <Col>
           <div className="sub-title">Date sort by</div>
@@ -113,6 +127,7 @@ const App = () => {
             <th>Author</th>
             <th>Subject</th>
             <th>Published</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -122,6 +137,9 @@ const App = () => {
               <td>{item.Author}</td>
               <td>{item.Subject}</td>
               <td>{item.Publish_Date}</td>
+              <td>
+                <Button onClick={() => handleMarkAsRead(index)}>Mark as Read</Button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -135,6 +153,27 @@ const App = () => {
           </PaginationItem>
         ))}
       </Pagination>
+      <h1 className="title">Read Books</h1>
+      <Table striped bordered hover style={{ marginTop: '10px', marginBottom: '10px'}}>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Author</th>
+            <th>Subject</th>
+            <th>Published</th>
+          </tr>
+        </thead>
+        <tbody>
+          {readBooks.map((item, index) => (
+            <tr key={index}>
+              <td>{item.Title}</td>
+              <td>{item.Author}</td>
+              <td>{item.Subject}</td>
+              <td>{item.Publish_Date}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </article>
   );
 };
