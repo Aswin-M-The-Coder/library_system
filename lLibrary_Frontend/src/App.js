@@ -138,7 +138,7 @@ const App = () => {
             onChange={handleExcludeChange}
             style={{ width: '250px', marginRight: '10px' }}
           />
-          <Button onClick={handleExcludeTerm}>Exclude</Button>
+          <Button onClick={handleExcludeTerm}>Reset</Button>
         </Col>
       
       <Col>
@@ -199,7 +199,7 @@ const App = () => {
               <td>{item.Title}</td>
               <td>{item.Author}</td>
               <td>{item.Subject}</td>
-              <td>{item.Publish_Date}</td>
+              <td>{item.Publish_Date.slice(0,10)}</td>
             </tr>
           ))}
         </tbody>
