@@ -168,10 +168,10 @@ const App = () => {
   });
 }}>
   <FormGroup>
-    <Input type="text" name="bookName" placeholder="Book Name" />
-    <Input type="text" name="authorName" placeholder="Author Name" />
-    <Input type="text" name="subject" placeholder="Subject" />
-    <Input type="date" name="publishedDate" placeholder="Published Date" />
+    <Input type="text" name="bookName" placeholder="Book Name" required/>
+    <Input type="text" name="authorName" placeholder="Author Name" required/>
+    <Input type="text" name="subject" placeholder="Subject" required/>
+    <Input type="date" name="publishedDate" placeholder="Published Date" required/>
     <Button type="submit">Add Book</Button>
   </FormGroup>
 </Form>
