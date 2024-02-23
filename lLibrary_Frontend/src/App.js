@@ -44,9 +44,18 @@ const App = () => {
 
   const handleMarkAsRead = (index) => {
     const bookToMarkAsRead = sortedData[index];
-    setReadBooks([...readBooks, bookToMarkAsRead]);
-    const updatedData = sortedData.filter((_, i) => i !== index);
-    setData(updatedData);
+
+    // Send a POST request to the backend to handle insertion and deletion
+    axios.post("https://library-system-1.onrender.com/mark-as-read", bookToMarkAsRead)
+      .then((response) => {
+        // If successful, update state accordingly
+        const updatedData = sortedData.filter((_, i) => i !== index);
+        setData(updatedData);
+        setReadBooks([...readBooks, bookToMarkAsRead]);
+      })
+      .catch((error) => {
+        console.error("Error marking book as read:", error);
+      });
   };
 
   const handleExcludeTerm = () => {
