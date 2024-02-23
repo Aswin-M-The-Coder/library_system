@@ -72,6 +72,22 @@ const App = () => {
       });
   };
 
+  const handleMarkAsNotRead = (index) => {
+    const bookToMarkAsRead = sortedData[index];
+
+    // Send a POST request to the backend to handle insertion and deletion
+    axios.post("https://library-system-1.onrender.com/mark-as-not-read", bookToMarkAsRead)
+      .then((response) => {
+        // If successful, update state accordingly
+        const updatedData = sortedData.filter((_, i) => i !== index);
+        setReadBooks(updatedData);
+        setData([...data, bookToMarkAsRead]);
+      })
+      .catch((error) => {
+        console.error("Error marking book as read:", error);
+      });
+  };
+
   const handleExcludeTerm = () => {
     if (excludeTerm.trim() !== "") {
       setExcludedTerms([...excludedTerms, excludeTerm.trim()]);
@@ -214,6 +230,7 @@ const App = () => {
             <th>Author</th>
             <th>Subject</th>
             <th>Published</th>
+            <th>Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -224,6 +241,9 @@ const App = () => {
               <td>{item.Author}</td>
               <td>{item.Subject}</td>
               <td>{item.Publish_Date.slice(0,10)}</td>
+              <td>
+                <Button onClick={() => handleMarkAsNotRead(index)}>delete</Button>
+              </td>
             </tr>
           ))}
         </tbody>

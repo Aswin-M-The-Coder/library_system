@@ -53,6 +53,32 @@ app.post("/mark-as-read", (req, res) => {
 });
 
 
+app.post("/mark-as-not-read", (req, res) => {
+  const book = req.body;
+
+  // Insert into "book_data" table
+  const insertQuery = `INSERT INTO library (Title, Author, Subject, Publish_Date) VALUES (?, ?, ?, ?)`;
+  connection.query(insertQuery, [book.Title, book.Author, book.Subject, book.Publish_Date], (err, result) => {
+    if (err) {
+      console.error("Error inserting into book_data table:", err.message);
+      res.status(500).json({ error: "Internal Server Error" });
+      return;
+    }
+
+    // Delete from "library" table
+    const deleteQuery = `DELETE FROM book_data WHERE Title = ?`;
+    connection.query(deleteQuery, [book.Title], (err, result) => {
+      if (err) {
+        console.error("Error deleting from library table:", err.message);
+        res.status(500).json({ error: "Internal Server Error" });
+        return;
+      }
+
+      res.status(200).json({ message: "Book marked as read successfully" });
+    });
+  });
+});
+
 app.get("/books", (req, res) => {
   const query = `SELECT * FROM library`;
   connection.query(query, [], (err, rows) => {
@@ -67,7 +93,7 @@ app.get("/books", (req, res) => {
 });
 
 app.get("/read_books", (req, res) => {
-  const query = `SELECT * FROM book_data`;
+  const query = `select * from book_data`;
   connection.query(query, [], (err, rows) => {
     if (err) {
       console.error("Error retrieving data:", err.message);
