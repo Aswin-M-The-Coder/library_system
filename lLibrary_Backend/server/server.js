@@ -66,6 +66,19 @@ app.get("/books", (req, res) => {
   });
 });
 
+app.get("/read_books", (req, res) => {
+  const query = `SELECT * FROM book_data`;
+  connection.query(query, [], (err, rows) => {
+    if (err) {
+      console.error("Error retrieving data:", err.message);
+      res.status(500).json({ error: "Internal Server Error" });
+      return;
+    }
+    res.json(rows);
+    console.log(rows);
+  });
+});
+
 app.post('/search', (req, res) => {
   const { searchOption, query } = req.body;
   let searchQuery = '';

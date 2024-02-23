@@ -22,6 +22,20 @@ const App = () => {
       .catch((error) => {
         console.error("Error fetching books:", error);
       });
+
+       
+  }, []);
+
+  useEffect(() => {
+    axios.get("https://library-system-1.onrender.com/read_books")
+      .then((response) => {
+        setReadBooks(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching books:", error);
+      }); 
+
+       
   }, []);
 
   const handleSearchChange = (event) => {
@@ -203,6 +217,7 @@ const App = () => {
           </tr>
         </thead>
         <tbody>
+          
           {readBooks.map((item, index) => (
             <tr key={index}>
               <td>{item.Title}</td>
