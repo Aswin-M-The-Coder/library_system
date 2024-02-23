@@ -6,11 +6,13 @@ import './App.css'; // Import CSS file for custom styles
 const App = () => {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [excludeTerm, setExcludeTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("name");
   const [sortOrder, setSortOrder] = useState("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const [booksPerPage] = useState(5);
   const [readBooks, setReadBooks] = useState([]);
+  const [excludedTerms, setExcludedTerms] = useState([]);
 
   useEffect(() => {
     axios.get("https://library-system-1.onrender.com/books")
@@ -27,6 +29,11 @@ const App = () => {
     setCurrentPage(1);
   };
 
+  const handleExcludeChange = (event) => {
+    setExcludeTerm(event.target.value);
+    setCurrentPage(1);
+  };
+
   const handleSearchCategoryChange = (event) => {
     setSearchCategory(event.target.value);
   };
@@ -35,17 +42,18 @@ const App = () => {
     setSortOrder(event.target.value);
   };
 
-  // const handleMarkAsRead = (index) => {
-  //   const bookToMarkAsRead = sortedData[index];
-  //   setReadBooks([...readBooks, bookToMarkAsRead]);
-  //   const updatedData = data.filter((_, i) => i !== index);
-  //   setData(updatedData);
-  // };
   const handleMarkAsRead = (index) => {
     const bookToMarkAsRead = sortedData[index];
     setReadBooks([...readBooks, bookToMarkAsRead]);
     const updatedData = sortedData.filter((_, i) => i !== index);
     setData(updatedData);
+  };
+
+  const handleExcludeTerm = () => {
+    if (excludeTerm.trim() !== "") {
+      setExcludedTerms([...excludedTerms, excludeTerm.trim()]);
+      setExcludeTerm("");
+    }
   };
 
   const filteredData = data.filter((item) => {
@@ -69,6 +77,16 @@ const App = () => {
       return true;
     }
     return false;
+  }).filter((item) => {
+    if (excludeTerm === "") return true;
+    if (
+      item.Title.toLowerCase().includes(excludeTerm.toLowerCase()) ||
+      item.Author.toLowerCase().includes(excludeTerm.toLowerCase()) ||
+      item.Subject.toLowerCase().includes(excludeTerm.toLowerCase())
+    ) {
+      return false;
+    }
+    return true;
   });
 
   const sortedData = filteredData.sort((a, b) => {
@@ -97,7 +115,7 @@ const App = () => {
       <h1 className="title">Library Management System</h1>
       <Row>
         <Col>
-          <div className="sub-title">Search by</div>
+          <div className="sub-title">Normal Search by</div>
           <Input type="select" value={searchCategory} onChange={handleSearchCategoryChange} style={{ width: '150px', marginRight: '10px' }}>
             <option value="name">Name</option>
             <option value="author">Author</option>
@@ -111,14 +129,27 @@ const App = () => {
             style={{ width: '250px', marginRight: '10px' }}
           />
         </Col>
+      </Row>
+      <Row>
         <Col>
-          <div className="sub-title">Date sort by</div>
-          <Input type="select" value={sortOrder} onChange={handleSortOrderChange} style={{ width: '150px' }}>
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-          </Input>
+          <div className="sub-title">Exclude Search by</div>
+          <Input
+            type="text"
+            placeholder="Exclude..."
+            value={excludeTerm}
+            onChange={handleExcludeChange}
+            style={{ width: '250px', marginRight: '10px' }}
+          />
+          <Button onClick={handleExcludeTerm}>Exclude</Button>
         </Col>
       </Row>
+      <Col>
+        <div className="sub-title">Date sort by</div>
+        <Input type="select" value={sortOrder} onChange={handleSortOrderChange} style={{ width: '150px' }}>
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </Input>
+      </Col>
       <span className="sub-title">Total Books found: {filteredData.length}</span>
       <Table striped bordered hover style={{ marginTop: '10px' }}>
         <thead>
