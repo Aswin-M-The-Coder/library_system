@@ -93,36 +93,32 @@ const App = () => {
 
   const filteredData = data.filter((item) => {
     if (searchTerm === "") return true;
+    const title = item.Title ? item.Title.toLowerCase() : "";
+    const author = item.Author ? item.Author.toLowerCase() : "";
+    const subject = item.Subject ? item.Subject.toLowerCase() : "";
     if (
-      searchCategory === "name" &&
-      item.Title.toLowerCase().includes(searchTerm.toLowerCase())
-    ) {
-      return true;
-    }
-    if (
-      searchCategory === "author" &&
-      item.Author.toLowerCase().includes(searchTerm.toLowerCase())
-    ) {
-      return true;
-    }
-    if (
-      searchCategory === "subject" &&
-      item.Subject.toLowerCase().includes(searchTerm.toLowerCase())
+      (searchCategory === "name" && title.includes(searchTerm.toLowerCase())) ||
+      (searchCategory === "author" && author.includes(searchTerm.toLowerCase())) ||
+      (searchCategory === "subject" && subject.includes(searchTerm.toLowerCase()))
     ) {
       return true;
     }
     return false;
   }).filter((item) => {
     if (excludeTerm === "") return true;
+    const title = item.Title ? item.Title.toLowerCase() : "";
+    const author = item.Author ? item.Author.toLowerCase() : "";
+    const subject = item.Subject ? item.Subject.toLowerCase() : "";
     if (
-      item.Title.toLowerCase().includes(excludeTerm.toLowerCase()) ||
-      item.Author.toLowerCase().includes(excludeTerm.toLowerCase()) ||
-      item.Subject.toLowerCase().includes(excludeTerm.toLowerCase())
+      title.includes(excludeTerm.toLowerCase()) ||
+      author.includes(excludeTerm.toLowerCase()) ||
+      subject.includes(excludeTerm.toLowerCase())
     ) {
       return false;
     }
     return true;
   });
+  
 
   const sortedData = filteredData.sort((a, b) => {
     if (sortOrder === "asc") {
@@ -149,24 +145,36 @@ const App = () => {
     try {
       const response = await axios.post("https://library-system-1.onrender.com/insertData", bookData);
       console.log("Data inserted successfully:", response.data);
+      // Update frontend data
+      
     } catch (error) {
       console.error("Error inserting data:", error);
     }
   };
+  
 
 
   return (
     <article className="container">
       <h1 className="title">Library Management System</h1>
-      <Form onSubmit={(event) => {
-  event.preventDefault(); 
-  insertData({ 
-    name: event.target.elements.bookName.value,
-    author: event.target.elements.authorName.value,
-    subject: event.target.elements.subject.value,
-    publishedDate: event.target.elements.publishedDate.value
-  });
-}}>
+      <Form
+  onSubmit={(event) => {
+    event.preventDefault();
+    const bookData = {
+      Title: event.target.elements.bookName.value,
+      Author: event.target.elements.authorName.value,
+      Subject: event.target.elements.subject.value,
+      Publish_Date: event.target.elements.publishedDate.value
+    };
+    insertData(bookData);
+    setData([ bookData, ...data]);
+    
+    event.target.elements.bookName.value = "";
+    event.target.elements.authorName.value = "";
+    event.target.elements.subject.value = "";
+    event.target.elements.publishedDate.value = "";
+  }}
+>
   <FormGroup>
     <Input type="text" name="bookName" placeholder="Book Name" required/>
     <Input type="text" name="authorName" placeholder="Author Name" required/>
@@ -227,7 +235,7 @@ const App = () => {
               <td>{item.Title}</td>
               <td>{item.Author}</td>
               <td>{item.Subject}</td>
-              <td>{item.Publish_Date.slice(0, 10)}</td>
+              <td>{item.Publish_Date && item.Publish_Date.slice(0, 10)}</td>
               <td>
                 <Button onClick={() => handleMarkAsRead(index)}>Mark as Read</Button>
               </td>
@@ -261,7 +269,7 @@ const App = () => {
               <td>{item.Title}</td>
               <td>{item.Author}</td>
               <td>{item.Subject}</td>
-              <td>{item.Publish_Date.slice(0, 10)}</td>
+              <td>{item.Publish_Date && item.Publish_Date.slice(0, 10)}</td>
               <td>
                 <Button onClick={() => handleMarkAsNotRead(index)}>delete</Button>
               </td>

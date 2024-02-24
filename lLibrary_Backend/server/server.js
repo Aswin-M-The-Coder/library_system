@@ -81,7 +81,7 @@ app.post("/mark-as-not-read", (req, res) => {
 
 
 app.post("/insertData", (req, res) => {
-  const { name, author, subject, publishedDate } = req.body;
+  const { Title, Author, Subject, Publish_Date } = req.body;
   const sql = "INSERT INTO library VALUES (?, ?, ?, ?)";
   const values = [name, author, subject, publishedDate];
 
