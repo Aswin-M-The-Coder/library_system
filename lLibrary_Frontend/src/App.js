@@ -236,8 +236,7 @@ const App = () => {
               <td>{item.Author}</td>
               <td>{item.Subject}</td>
               <td>{item.Publish_Date && item.Publish_Date.slice(0, 10)}</td>
-              <td>
-                <Button onClick={() => handleMarkAsRead(index)}>Mark as Read</Button>
+              <td>{item.Title && <Button onClick={() => handleMarkAsRead(index)}>Mark as Read</Button>}
               </td>
             </tr>
           ))}
